@@ -4,6 +4,8 @@
   "version": "1.2.0",
   "repository": "mafintosh/hls-decryptor",
   "dependencies": {
+    "cors": "^2.7.1",
+    "lru-cache-cluster": "git+https://git@github.com/peerbelt/node-lru-cache-cluster.git",
     "minimist": "^0.2.0",
     "request": "^2.36.0",
     "root": "^0.7.1"
