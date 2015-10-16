@@ -65,8 +65,8 @@ var log = function(msg) {
 }
 
 app.get('/crossdomain.xml', function (req, res) {
-	res.setHeader('Content-Type', 'text/xml');
-	res.send("<?xml version=\"1.0\"?>\n" +
+  res.setHeader('Content-Type', 'text/xml');
+  res.send("<?xml version=\"1.0\"?>\n" +
 '<!DOCTYPE cross-domain-policy SYSTEM "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">' + "\n" +
 "<cross-domain-policy>\n" +
 '<allow-access-from domain="*" />' + "\n" +
@@ -90,7 +90,7 @@ app.get('/', function(req, res) {
       var seq = 0
 
       body = body
-        .map(function(line) {
+        .map(function(line, i) {
           if (line.indexOf('#EXT-X-MEDIA-SEQUENCE') === 0) {
             seq = parseInt(line.split(':').pop(), 10)
             return line
@@ -103,10 +103,15 @@ app.get('/', function(req, res) {
             return null
           }
 
+          if (i > 0 && body[i - 1].indexOf('#EXT-X-STREAM-INF') === 0) {
+            var m3u8_sub_url = url.resolve(playlist, body[i - 1].trim());
+            return '/?url=' + encodeURIComponent(m3u8_sub_url);
+          }
+
           if (line[0] === '#') return line
 
-		  var ts_url = url.resolve(playlist, line.trim())
-		  var key_url = url.resolve(playlist, key) || ''
+      var ts_url = url.resolve(playlist, line.trim())
+      var key_url = url.resolve(playlist, key) || ''
 
           return '/ts?url='+encodeURIComponent(ts_url)+'&key='+encodeURIComponent(key)+'&iv='+encodeURIComponent(iv || encIV(seq++))
         })
@@ -128,8 +133,6 @@ app.get('/', function(req, res) {
     req()
   })
 })
-
-app.get('/index.m3u8', '/')
 
 var getKey = function(url, headers, cb) {
   cache.get(url, function (key) {
@@ -171,6 +174,8 @@ app.get('/ts', function(req, res) {
     })
   })
 })
+
+app.get('/index.m3u8', '/');
 
 app.listen(argv.port || 9999, function(addr) {
   console.log('Listening on http://'+addr+'/index.m3u8')
