@@ -8,14 +8,19 @@ npm install -g hls-decryptor
 
 ## Usage
 
-Simply pass a link to http live streaming server
+Start the server:
 
 ```
-hls-decryptor http://some-hls-server.com/index.m3u8
+hls-decryptor [--port 9999] [--quiet]
 ```
 
-If the playlist contains encrypted segments hls-decryptor will decrypt them for you.
-I needed this to make encrypted streams work on my raspberry pi.
+If the playlist contains encrypted segments or encrypted subplaylists hls-decryptor will decrypt them for you.
+
+To play an encrypted stream, use a URL like this:
+
+```
+http://192.168.1.10:9999/index.m3u8?url=http%3A%2F%2Fdevimages.apple.com%2Fiphone%2Fsamples%2Fbipbop%2Fgear1%2Fprog_index.m3u8
+```
 
 ## License
 
